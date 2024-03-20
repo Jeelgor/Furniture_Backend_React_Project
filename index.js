@@ -12,34 +12,9 @@ mongoose.connect("mongodb://127.0.0.1:27017/Furniture");
 
 const OrderModel = require("./model/ProductsStore");
 const ProductDataModel = require("./model/ProductsStore");
-const AdminModel = require("./model/Admin");
 const ProductsModel = require("./model/AddProducts");
 const SofasModel = require("./model/Sofas");
 const StudyTableModel = require("./model/StudyTable");
-
-// app.post("/checkout", async (req, res) => {
-//   try {
-//     const orderDetails = req.body;
-//     // Assuming you have a separate Order model
-//     const order = new OrderModel(orderDetails);
-//     const savedOrder = await order.save();
-
-//     // Clear the cart after successful checkout
-//     // You may need to implement a method for clearing the cart in your CartContext
-//     // For example: clearCart()
-//     // Note: This depends on your specific implementation of the CartContext
-//     // For simplicity, you can assume a successful checkout clears the entire cart
-//     // Implement the clearCart() method accordingly in your context.
-//     // Example: clearCart();
-
-//     res
-//       .status(200)
-//       .json({ message: "Checkout successful!", order: savedOrder });
-//   } catch (error) {
-//     console.error("Error during checkout:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 app.post("/checkout", async (req, res) => {
   try {
@@ -62,6 +37,7 @@ app.post("/checkout", async (req, res) => {
   }
 });
 
+// Login  Process
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   FurnitureModel.findOne({ email: email }).then((user) => {
@@ -77,22 +53,6 @@ app.post("/login", (req, res) => {
   });
 });
 
-// For Admin Login
-
-app.post("/Adminlogin", (req, res) => {
-  const { email, password } = req.body;
-  AdminModel.findOne({ email: email }).then((user) => {
-    if (user) {
-      if (user.password === password) {
-        res.json("Success");
-      } else {
-        res.json("Password is Wrong");
-      }
-    } else {
-      res.json("No Record Found on this data");
-    }
-  });
-});
 // CODE OVER
 app.post("/register", (req, res) => {
   FurnitureModel.create(req.body)
@@ -102,7 +62,7 @@ app.post("/register", (req, res) => {
 
 // For Order Detail  checkout
 
-// retrive User Login Data
+// retrive User Login Data for Admin Panel
 app.get("/admin/users", async (req, res) => {
   try {
     const registeredUsers = await FurnitureModel.find();
@@ -127,7 +87,7 @@ app.delete("/admin/users/:id", async (req, res) => {
   }
 });
 
-// Retrive Products Order Data
+// Retrive Products Order Data For Adminn  
 app.get("/admin/product", async (req, res) => {
   try {
     const product = await ProductDataModel.find();
@@ -151,7 +111,7 @@ app.delete("/admin/product/:id", async (req, res) => {
 });
 // code over
 
-// Add Products CODE
+// Add Products CODE  
 app.post("/Addproduct", (req, res) => {
   ProductsModel.create(req.body)
     .then((Furniture) => res.json(Furniture))
