@@ -1,10 +1,8 @@
-
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const FurnitureModel = require("./model/Furniture");
-
+const port = process.env.PORT || 3011;
 const app = express(); // Create an instance of express
 
 app.use(express.json());
@@ -15,11 +13,13 @@ mongoose.connect("mongodb://127.0.0.1:27017/Furniture");
 const OrderModel = require("./model/ProductsStore");
 const ProductDataModel = require("./model/ProductsStore");
 const AdminModel = require("./model/Admin");
+const ProductsModel = require("./model/AddProducts");
+const SofasModel = require("./model/Sofas");
+const StudyTableModel = require("./model/StudyTable");
 
 // app.post("/checkout", async (req, res) => {
 //   try {
 //     const orderDetails = req.body;
-
 //     // Assuming you have a separate Order model
 //     const order = new OrderModel(orderDetails);
 //     const savedOrder = await order.save();
@@ -41,7 +41,7 @@ const AdminModel = require("./model/Admin");
 //   }
 // });
 
-app.post('/checkout', async (req, res) => {
+app.post("/checkout", async (req, res) => {
   try {
     const { name, price, quantity, imgpath } = req.body;
 
@@ -57,11 +57,10 @@ app.post('/checkout', async (req, res) => {
 
     res.json({ success: true, order: savedOrder });
   } catch (error) {
-    console.error('Error during checkout:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error during checkout:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
-
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -70,10 +69,10 @@ app.post("/login", (req, res) => {
       if (user.password === password) {
         res.json("Success");
       } else {
-        res.json("Password is Wrong");
+        res.json("The Password is incorrect");
       }
     } else {
-      res.json("No Record Found on this data");
+      res.json("No record Exits");
     }
   });
 });
@@ -128,10 +127,7 @@ app.delete("/admin/users/:id", async (req, res) => {
   }
 });
 
-
-
-
-// Retrive Products Order Data 
+// Retrive Products Order Data
 app.get("/admin/product", async (req, res) => {
   try {
     const product = await ProductDataModel.find();
@@ -142,7 +138,7 @@ app.get("/admin/product", async (req, res) => {
   }
 });
 
-// Delete products 
+// Delete products
 app.delete("/admin/product/:id", async (req, res) => {
   const productId = req.params.id;
   try {
@@ -155,7 +151,56 @@ app.delete("/admin/product/:id", async (req, res) => {
 });
 // code over
 
+// Add Products CODE
+app.post("/Addproduct", (req, res) => {
+  ProductsModel.create(req.body)
+    .then((Furniture) => res.json(Furniture))
+    .catch((err) => res.json(err));
+});
 
-app.listen(3011, () => {
+// Show Products
+
+app.get("/Addproducts", async (req, res) => {
+  try {
+    const products = await ProductsModel.find();
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching registered users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Add Sofas
+app.post("/Sofas", (req, res) => {
+  SofasModel.create(req.body)
+    .then((Furniture) => res.json(Furniture))
+    .catch((err) => res.json(err));
+});
+app.get("/Sofas", async (req, res) => {
+  try {
+    const Sofas = await SofasModel.find();
+    res.json(Sofas);
+  } catch (error) {
+    console.error("Error fetching registered users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Study Table
+app.post("/StudyTable", (req, res) => {
+  StudyTableModel.create(req.body)
+    .then((Furniture) => res.json(Furniture))
+    .catch((err) => res.json(err));
+});
+app.get("/StudyTable", async (req, res) => {
+  try {
+    const tbl = await StudyTableModel.find();
+    res.json(tbl);
+  } catch (error) {
+    console.error("Error fetching registered users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.listen(port, () => {
   console.log("Server is Running");
 });
